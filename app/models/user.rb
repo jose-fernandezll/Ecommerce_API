@@ -1,5 +1,9 @@
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
+
+  has_one :cart, dependent: :destroy
+  after_create :create_cart
+
   enum role: {
     user: 0,
     admin: 1
@@ -9,4 +13,9 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
+  private
+
+  def create_cart
+    Cart.create(user: self)
+  end
 end
