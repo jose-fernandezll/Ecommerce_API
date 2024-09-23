@@ -10,4 +10,11 @@ Rails.application.routes.draw do
   }
   resources :products
 
+  resource :cart, only: [:show] do
+    post 'add_item', to: 'carts#add_item'
+    delete 'remove_item', to: 'carts#remove_item'
+  end
+
 end
+
+

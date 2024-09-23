@@ -2,7 +2,7 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   has_one :cart, dependent: :destroy
-  after_create :create_cart
+  after_commit :create_cart, on: :create
 
   enum role: {
     user: 0,
