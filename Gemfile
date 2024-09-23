@@ -22,3 +22,5 @@ group :development do
 
 end
 
+
+gem "pundit", "~> 2.4"

@@ -1,5 +1,6 @@
 class ProductsController < ApplicationController
   before_action :find_product, only: %i[show update destroy]
+
   def index
     @products = Product.all
 
@@ -12,6 +13,7 @@ class ProductsController < ApplicationController
 
   def create
     @product = Product.new(product_params)
+    authorize @product
 
     return render json: @product, status: :created if @product.save
 
@@ -25,6 +27,7 @@ class ProductsController < ApplicationController
   end
 
   def destroy
+    authorize @product
     @product.destroy
     head :no_content
   end
