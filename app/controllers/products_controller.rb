@@ -21,6 +21,8 @@ class ProductsController < ApplicationController
   end
 
   def update
+    authorize @product
+
     return render json: @product if @product.update(product_params)
 
     render json: @product.errors, status: :unprocessable_entity
