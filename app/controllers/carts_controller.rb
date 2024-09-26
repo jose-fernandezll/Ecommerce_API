@@ -21,6 +21,10 @@ class CartsController < ApplicationController
     render json: @cart, include: [:cart_items], status: :ok
   end
 
+  def show
+    render json: @cart, status: :ok
+  end
+
   private
 
   def set_cart
