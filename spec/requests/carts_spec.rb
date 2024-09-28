@@ -26,7 +26,16 @@ RSpec.describe "Carts", type: :request do
       user.cart.products.append(product)
 
       delete remove_item_cart_url, params: { product_id: product.id }
+
       expect(response).to be_successful
+    end
+
+    it 'cart/remove_item/' do
+      delete remove_item_cart_url, params: { product_id: product.id }
+
+      binding.irb
+
+      expect(response.data.error).to eq("Item not found in cart")
     end
   end
 end
