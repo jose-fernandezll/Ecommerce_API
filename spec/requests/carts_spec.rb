@@ -33,9 +33,7 @@ RSpec.describe "Carts", type: :request do
     it 'cart/remove_item/' do
       delete remove_item_cart_url, params: { product_id: product.id }
 
-      binding.irb
-
-      expect(response.data.error).to eq("Item not found in cart")
+      expect(json_body['error']).to eq("Item not found in cart")
     end
   end
 end
