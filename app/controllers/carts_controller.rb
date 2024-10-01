@@ -3,8 +3,8 @@ class CartsController < ApplicationController
 
   def add_item
     authorize @cart
-
     product = Product.find(params[:product_id])
+
     item = find_or_initialize_cart_item(product)
 
     render json: @cart, include: [:cart_items], status: :ok
@@ -13,9 +13,7 @@ class CartsController < ApplicationController
   def remove_item
     authorize @cart
 
-    item = @cart.cart_items.find_by(product_id: params[:product_id])
-
-    return render json: { error: "Item not found in cart" }, status: :not_found unless item
+    item = @cart.cart_items.find_by!(product_id: params[:product_id])
 
     item.destroy
     render json: @cart, include: [:cart_items], status: :ok
