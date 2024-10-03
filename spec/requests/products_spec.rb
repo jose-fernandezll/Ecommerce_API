@@ -83,9 +83,20 @@ RSpec.describe "Carts", type: :request do
     describe '/products' do
       let(:product) { valid_product }
 
-      it 'should create the product' do
-        subject
-        expect(response).to be_successful
+      describe 'valid' do
+        it 'should create the product' do
+          subject
+          expect(response).to be_successful
+        end
+
+        it 'should create the product' do
+          subject
+          expect(json_body['data']).to eq(serialized_body('ProductSerializer', Product.first)['data'])
+        end
+      end
+
+      describe 'invalid' do
+
       end
     end
   end

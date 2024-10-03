@@ -20,7 +20,7 @@ class CartsController < ApplicationController
   end
 
   def show
-    render json: @cart, status: :ok
+    render json: CartSerializer.new(@cart, include: [:cart_items]).serializable_hash.to_json
   end
 
   private

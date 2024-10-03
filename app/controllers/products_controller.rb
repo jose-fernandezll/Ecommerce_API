@@ -15,7 +15,7 @@ class ProductsController < ApplicationController
     @product = Product.new(product_params)
     authorize @product
 
-    return render json: @product, status: :created if @product.save
+    return render json: ProductSerializer.new(@product).serializable_hash.to_json, status: :created if @product.save
 
     render json: @product.errors, status: :unprocessable_entity
   end

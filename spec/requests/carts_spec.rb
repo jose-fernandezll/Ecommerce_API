@@ -4,10 +4,24 @@ RSpec.describe "Carts", type: :request do
   include_context :login_user
 
   context 'GET' do
+    subject { get cart_url }
+    let!(:product_1) { create(:product) }
+    let!(:product_2) { create(:product) }
+
     describe "/cart" do
-      it 'should have a http status code :ok' do
-        get cart_url
+      it 'should return a HTTP status code :ok' do
+        subject
         expect(response).to be_successful
+      end
+
+      before do
+        current_user.cart.products.append(product_1)
+        current_user.cart.products.append(product_2) if defined?(product_2)
+      end
+
+      it 'should match the current user\'s cart' do
+        subject
+        expect(json_body['data']).to eq(serialized_body('CartSerializer', current_user.cart)['data'])
       end
     end
   end
@@ -22,16 +36,16 @@ RSpec.describe "Carts", type: :request do
 
         before { subject }
 
-        it 'have a http status code :ok' do
+        it 'returns a HTTP status code :ok' do
           expect(response).to be_successful
         end
 
-        it 'has a product in the car' do
+        it 'add a product to the car' do
           subject
           expect(current_user.cart.products.count).to eq(1)
         end
 
-        it 'the product in the cart should match product' do
+        it 'matches the added product in the cart' do
           expect(current_user.cart.products.first).to eq(product)
         end
       end
@@ -39,7 +53,7 @@ RSpec.describe "Carts", type: :request do
       describe 'invalid when' do
         let(:product_id) { 9999 }
 
-        it 'the product dont exist' do
+        it 'returns an error when the product does not exist' do
           subject
           expect(json_body['error']).to eq('Product not found.')
         end
@@ -63,7 +77,7 @@ RSpec.describe "Carts", type: :request do
       end
 
       describe 'valid when' do
-        it 'have a http status code :ok' do
+        it 'returns a HTTP status code :ok' do
           subject
           expect(response).to be_successful
         end
@@ -84,7 +98,7 @@ RSpec.describe "Carts", type: :request do
       describe 'invalid when' do
         let(:product_id) { 9999 }
 
-        it 'not found the item in the car' do
+        it 'returns an error when the item is not found in the cart' do
           subject
           expect(json_body['error']).to eq("CartItem not found.")
         end
@@ -92,7 +106,7 @@ RSpec.describe "Carts", type: :request do
         describe 'logout user' do
           include_context :logout_user
 
-          it 'when the user is logged out' do
+          it 'returns an error when the user is logged out' do
             subject
             expect(response.body).to eq('You need to sign in or sign up before continuing.')
           end
