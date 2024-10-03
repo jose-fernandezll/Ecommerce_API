@@ -17,10 +17,7 @@ RSpec.describe "Products", type: :request do
 
       it 'should be return 2 products' do
         subject
-        
-        binding.irb
-        
-        expect(json_body.count).to eq(2)
+        expect(json_body['data'].count).to eq(2)
       end
 
       it 'should be match product 1 and 2' do
@@ -29,8 +26,7 @@ RSpec.describe "Products", type: :request do
         products.append(JSON.parse(product_2.to_json))
 
         subject
-
-        expect(json_body).to eq(products)
+        expect(json_body['data']).to eq(serialized_body('ProductSerializer', Product.all)['data'])
       end
     end
 
@@ -47,7 +43,7 @@ RSpec.describe "Products", type: :request do
         it 'should be match product 1' do
           product = JSON.parse(product_1.to_json)
           subject
-          expect(json_body.first).to eq(product)
+          expect(json_body['data'].first).to eq(serialized_body('ProductSerializer', Product.first)['data'])
         end
       end
 
