@@ -7,7 +7,7 @@ class CartsController < ApplicationController
 
     item = find_or_initialize_cart_item(product)
 
-    render json: @cart, include: [:cart_items], status: :ok
+    render json: CartSerializer.new(@cart, include: [:cart_items]).serializable_hash.to_json, status: :ok
   end
 
   def remove_item
@@ -16,7 +16,7 @@ class CartsController < ApplicationController
     item = @cart.cart_items.find_by!(product_id: params[:product_id])
 
     item.destroy
-    render json: @cart, include: [:cart_items], status: :ok
+    render json: CartSerializer.new(@cart, include: [:cart_items]).serializable_hash.to_json, status: :ok
   end
 
   def show

@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe "Carts", type: :request do
+RSpec.describe "Products", type: :request do
   include_context :login_user, admin: true
-  #include_context :login_user
+
   context 'GET' do
     let!(:product_1) { create(:product) }
     let!(:product_2) { create(:product) }
@@ -17,6 +17,9 @@ RSpec.describe "Carts", type: :request do
 
       it 'should be return 2 products' do
         subject
+        
+        binding.irb
+        
         expect(json_body.count).to eq(2)
       end
 
