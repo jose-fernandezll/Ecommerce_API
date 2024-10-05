@@ -10,17 +10,17 @@ RSpec.describe "Products", type: :request do
     subject { get products_url }
 
     describe '/products' do
-      it 'should have a http status code :ok' do
+      it 'should return a HTTP status code :ok' do
         subject
         expect(response).to be_successful
       end
 
-      it 'should be return 2 products' do
+      it 'should return 2 products' do
         subject
         expect(json_body['data'].count).to eq(2)
       end
 
-      it 'should be match product 1 and 2' do
+      it 'should match product 1 and 2' do
         products = []
         products.append(JSON.parse(product_1.to_json))
         products.append(JSON.parse(product_2.to_json))
@@ -31,19 +31,19 @@ RSpec.describe "Products", type: :request do
     end
 
     describe '/products/:id' do
-      subject { get products_url(product) }
+      subject { get product_url(product) }
 
       describe 'valid context' do
         let(:product){ product_1}
-        it 'should have a http status code :ok' do
+        it 'should return a HTTP status code :ok' do
           subject
           expect(response).to be_successful
         end
 
-        it 'should be match product 1' do
-          product = JSON.parse(product_1.to_json)
+        it 'should match product 1' do
           subject
-          expect(json_body['data'].first).to eq(serialized_body('ProductSerializer', Product.first)['data'])
+
+          expect(json_body['data']).to eq(serialized_body('ProductSerializer', product_1)['data'])
         end
       end
 
@@ -83,7 +83,7 @@ RSpec.describe "Products", type: :request do
       let(:product) { valid_product }
 
       describe 'valid' do
-        it 'should create the product' do
+        it 'should return a HTTP status code :ok' do
           subject
           expect(response).to be_successful
         end
@@ -95,7 +95,8 @@ RSpec.describe "Products", type: :request do
       end
 
       describe 'invalid' do
-
+        # render errors
+        # render forbidden
       end
     end
   end
