@@ -2,9 +2,9 @@ class ApplicationController < ActionController::API
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
   include Pundit::Authorization
+  include RescueErrors
 
   rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
-  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
   private
 
@@ -12,9 +12,6 @@ class ApplicationController < ActionController::API
     render json: { error: 'You are not authorized to perform this action.' }, status: :forbidden
   end
 
-  def render_not_found(exception)
-    render json: { error: "#{exception.model} not found." }, status: :not_found
-  end
 
   protected
 

@@ -7,16 +7,16 @@ RSpec.describe "Products", type: :request do
     let!(:product_1) { create(:product) }
     let!(:product_2) { create(:product) }
 
-    subject { get products_url }
+    subject(:get_index){ get products_url }
 
     describe '/products' do
       it 'should return a HTTP status code :ok' do
-        subject
+        get_index
         expect(response).to be_successful
       end
 
       it 'should return 2 products' do
-        subject
+        get_index
         expect(json_body['data'].count).to eq(2)
       end
 
@@ -25,23 +25,24 @@ RSpec.describe "Products", type: :request do
         products.append(JSON.parse(product_1.to_json))
         products.append(JSON.parse(product_2.to_json))
 
-        subject
+        get_index
         expect(json_body['data']).to eq(serialized_body('ProductSerializer', Product.all)['data'])
       end
     end
 
     describe '/products/:id' do
-      subject { get product_url(product) }
+      subject(:show_product) { get product_url(product) }
 
       describe 'valid context' do
         let(:product){ product_1}
+
         it 'should return a HTTP status code :ok' do
-          subject
+          show_product
           expect(response).to be_successful
         end
 
         it 'should match product 1' do
-          subject
+          show_product
 
           expect(json_body['data']).to eq(serialized_body('ProductSerializer', product_1)['data'])
         end
@@ -49,18 +50,19 @@ RSpec.describe "Products", type: :request do
 
       describe 'invalid context' do
         let(:invalid_product_id) { 9999 }
-        subject { get product_url(invalid_product_id) }
+        subject(:show_product) { get product_url(invalid_product_id) }
 
         it 'when the product doesnt exist' do
-          subject
-          expect(json_body['error']).to eq('Product not found.')
+          show_product
+
+          expect(json_body['message']).to eq("Couldn't find Product")
         end
       end
     end
   end
 
   context 'POST' do
-    subject{ post products_url, params: { product: product }}
+    subject(:post_product){ post products_url, params: { product: product }}
 
     let(:valid_product){
       {
@@ -84,19 +86,55 @@ RSpec.describe "Products", type: :request do
 
       describe 'valid' do
         it 'should return a HTTP status code :ok' do
-          subject
+          post_product
           expect(response).to be_successful
         end
 
         it 'should create the product' do
-          subject
+          post_product
           expect(json_body['data']).to eq(serialized_body('ProductSerializer', Product.first)['data'])
         end
       end
 
       describe 'invalid' do
-        # render errors
+        let(:product) { invalid_product }
+
+        it 'should return a HTTP status code :unprocessable_entity' do
+          post_product
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it 'should return render errors' do
+          post_product
+          expect(json_body['errors']).to eq({"price"=>["must be greater than or equal to 0"], "stock"=>["must be greater than or equal to 0"]})
+        end
+
+
+        it 'should return render errors' do
+          invalid_product[:name] = ''
+          invalid_product[:description] = ''
+
+          post_product
+
+          expect(json_body['errors']).to eq({
+            "description"=>["can't be blank"], "name"=>["can't be blank"],
+            "price"=>["must be greater than or equal to 0"], "stock"=>["must be greater than or equal to 0"]
+          })
+        end
         # render forbidden
+
+        #describe 'logout user' do
+        #  include_context :login_user, admin: false
+        #  let(:headers) { { 'Authorization' => "Bearer " } }
+#
+        #  it 'returns a forbidden status' do
+        #    post products_url, params: { product: valid_product }, headers: headers
+        #    
+        #    binding.irb
+        #    
+        #    expect(response.body).to include('You are not authorized to perform this action.')
+        #  end
+        #end
       end
     end
   end
