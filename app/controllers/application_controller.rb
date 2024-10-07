@@ -1,10 +1,13 @@
 class ApplicationController < ActionController::API
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
+  before_action :skip_session_storage
+
   include Pundit::Authorization
   include RescueErrors
 
   rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
+
 
   private
 
@@ -12,6 +15,9 @@ class ApplicationController < ActionController::API
     render json: { error: 'You are not authorized to perform this action.' }, status: :forbidden
   end
 
+  def skip_session_storage
+    request.session_options[:skip] = true
+  end
 
   protected
 

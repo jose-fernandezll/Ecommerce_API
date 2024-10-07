@@ -4,7 +4,7 @@ RSpec.describe "Carts", type: :request do
   include_context :login_user
 
   context 'GET' do
-    subject(:show_cart) { get cart_url }
+    subject(:show_cart) { get cart_url, headers: headers }
     let!(:product_1) { create(:product) }
     let!(:product_2) { create(:product) }
 
@@ -29,7 +29,7 @@ RSpec.describe "Carts", type: :request do
   context 'POST' do
     describe "/cart/add_item" do
       let(:product) { create(:product) }
-      subject(:add_cart_item) { post add_item_cart_url, params: { product_id: product_id } }
+      subject(:add_cart_item) { post add_item_cart_url, params: { product_id: product_id }, headers: headers  }
 
       describe 'valid when' do
         let(:product_id) { product.id }
@@ -66,7 +66,7 @@ RSpec.describe "Carts", type: :request do
     let(:product) { create(:product) }
     let(:product_2) { create(:product) }
 
-    subject(:delete_cart_item) { delete remove_item_cart_url, params: { product_id: product_id } }
+    subject(:delete_cart_item) { delete remove_item_cart_url, params: { product_id: product_id }, headers: headers  }
 
     describe "cart/remove_item/:id" do
       let(:product_id) { product.id }
@@ -107,7 +107,7 @@ RSpec.describe "Carts", type: :request do
         end
 
         describe 'logout user' do
-          include_context :logout_user
+          let(:headers) { {} }
 
           it 'returns an error when the user is logged out' do
             delete_cart_item

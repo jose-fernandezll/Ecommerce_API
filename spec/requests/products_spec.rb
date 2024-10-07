@@ -7,7 +7,7 @@ RSpec.describe "Products", type: :request do
     let!(:product_1) { create(:product) }
     let!(:product_2) { create(:product) }
 
-    subject(:get_index){ get products_url }
+    subject(:get_index){ get products_url, headers: headers  }
 
     describe '/products' do
       it 'should return a HTTP status code :ok' do
@@ -31,7 +31,7 @@ RSpec.describe "Products", type: :request do
     end
 
     describe '/products/:id' do
-      subject(:show_product) { get product_url(product) }
+      subject(:show_product) { get product_url(product), headers: headers  }
 
       describe 'valid context' do
         let(:product){ product_1}
@@ -50,7 +50,7 @@ RSpec.describe "Products", type: :request do
 
       describe 'invalid context' do
         let(:invalid_product_id) { 9999 }
-        subject(:show_product) { get product_url(invalid_product_id) }
+        subject(:show_product) { get product_url(invalid_product_id), headers: headers  }
 
         it 'when the product doesnt exist' do
           show_product
@@ -62,7 +62,7 @@ RSpec.describe "Products", type: :request do
   end
 
   context 'POST' do
-    subject(:post_product){ post products_url, params: { product: product }}
+    subject(:post_product){ post products_url, params: { product: product }, headers: headers }
 
     let(:valid_product){
       {
@@ -123,18 +123,15 @@ RSpec.describe "Products", type: :request do
         end
         # render forbidden
 
-        #describe 'logout user' do
-        #  include_context :login_user, admin: false
-        #  let(:headers) { { 'Authorization' => "Bearer " } }
-#
-        #  it 'returns a forbidden status' do
-        #    post products_url, params: { product: valid_product }, headers: headers
-        #    
-        #    binding.irb
-        #    
-        #    expect(response.body).to include('You are not authorized to perform this action.')
-        #  end
-        #end
+        describe 'logout user' do
+          include_context :login_user, admin: false
+
+          it 'returns a forbidden status' do
+            post products_url, params: { product: valid_product }, headers: headers
+            expect(response).to have_http_status(:forbidden)
+            expect(response.body).to include('You are not authorized to perform this action.')
+          end
+        end
       end
     end
   end
