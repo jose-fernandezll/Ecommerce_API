@@ -2,19 +2,19 @@
 
 class Users::RegistrationsController < Devise::RegistrationsController
   respond_to :json
+  def create
+    build_resource(sign_up_params)
 
-  private
-
-  def respond_with(resource, _opts = {})
-    if resource.persisted?
-      @token = request.env['warden-jwt_auth.token']
+    if resource.save
+      # Generamos el token manualmente sin iniciar sesión
+      @token = Warden::JWTAuth::UserEncoder.new.call(resource, :user, nil).first
       headers['Authorization'] = @token
 
       render json: {
-        status: { code: 200, message: 'Signed up successfully.',
-                  token: @token,
-                  data: UserSerializer.new(resource).serializable_hash[:data][:attributes] }
-      }
+        status: { code: 201, message: 'User created successfully.' },
+        token: @token,
+        data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
+      }, status: :created
     else
       render json: {
         status: { message: "User couldn't be created successfully. #{resource.errors.full_messages.to_sentence}" }

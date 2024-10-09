@@ -317,6 +317,9 @@ Devise.setup do |config|
     ]
     jwt.expiration_time = 1.day.to_i
   end
+  #Devise.setup do |config|
+  #  config.skip_session_storage = [:http_auth, :token_auth]
+  #end
 
   # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
