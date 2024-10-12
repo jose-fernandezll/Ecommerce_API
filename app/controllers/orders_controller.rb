@@ -3,7 +3,7 @@ class OrdersController < ApplicationController
   before_action :find_order, only: [:show]
 
   def create
-    authorize @order
+    authorize Order
 
     return render json: { error: 'Cart is empty' }, status: :unprocessable_entity if @cart.cart_items.empty?
 
@@ -13,25 +13,25 @@ class OrdersController < ApplicationController
       @cart.cart_items.each do |cart_item|
         product = cart_item.product
 
-        # Verificar stock
-        if product.stock < cart_item.quantity
-          raise ActiveRecord::Rollback, "Insufficient stock for product #{product.name}"
-        end
-
-        # Crear OrderItem y reducir el stock
         order.order_items.build(
           product: product,
           quantity: cart_item.quantity,
           price: product.price
         )
 
-        # Actualizar stock
         product.update!(stock: product.stock - cart_item.quantity)
       end
 
-      order.save! # Guardar la orden si todo va bien
-      @cart.cart_items.destroy_all # Vaciar el carrito
+      order.save!
+      @cart.cart_items.destroy_all
     end
+
+    render json: {
+      message: "La orden ha sido creada exitosamente.",
+      status: "pending",
+      order: OrderSerializer.new(order).serializable_hash
+    }, status: :created
+
   end
 
   def show

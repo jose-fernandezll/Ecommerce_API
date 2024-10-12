@@ -12,6 +12,9 @@ require "action_mailbox/engine"
 require "action_text/engine"
 require "action_view/railtie"
 require "action_cable/engine"
+require_relative '../app/errors/insufficient_stock_error'
+
+
 # require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     delete 'remove_item', to: 'carts#remove_item'
   end
 
+  resource :orders, only: %i[show create]
 end
 
 

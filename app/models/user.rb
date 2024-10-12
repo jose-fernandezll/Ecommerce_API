@@ -3,6 +3,7 @@ class User < ApplicationRecord
 
   has_one :cart, dependent: :destroy
   after_commit :create_cart, on: :create
+  has_many :orders, dependent: :destroy
 
   enum role: {
     user: 0,

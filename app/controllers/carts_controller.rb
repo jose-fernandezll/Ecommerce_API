@@ -5,6 +5,10 @@ class CartsController < ApplicationController
     authorize @cart
     product = Product.find(params[:product_id])
 
+    if product.stock < params[:quantity].to_i
+      raise InsufficientStockError.new(product)
+    end
+
     item = find_or_initialize_cart_item(product)
 
     render json: CartSerializer.new(@cart, include: [:cart_items]).serializable_hash.to_json, status: :ok

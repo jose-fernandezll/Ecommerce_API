@@ -57,6 +57,17 @@ RSpec.describe "Carts", type: :request do
           add_cart_item
           expect(json_body['message']).to eq("Couldn't find Product")
         end
+
+        describe 'returns an error when there is insufficient stock' do
+          let(:product_id) { product.id }
+
+          subject(:add_cart_item) { post add_item_cart_url, params: { product_id: product_id, quantity: 999 }, headers: headers  }
+
+          it 'returns an error when there is insufficient stock for the product' do
+            add_cart_item
+            expect(json_body['error']).to eq("Insufficient stock for product #{product.name}")
+          end
+        end
       end
 
     end
