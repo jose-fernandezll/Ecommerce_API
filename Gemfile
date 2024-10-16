@@ -29,3 +29,4 @@ end
 
 gem "pundit", "~> 2.4"
 gem 'simplecov', require: false, group: :test
+gem 'stripe'
