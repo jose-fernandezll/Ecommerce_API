@@ -1,7 +1,3 @@
-# Examples:
-#
-#   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
-#   Character.create(name: "Luke", movie: movies.first)
-#   
-
-
+user = User.new(name: "jose fernandez", email: "jose@test.com")
+user.save(validate: false)
+user.update!(stripe_id: 'fake_stripe_id_for_seed')
