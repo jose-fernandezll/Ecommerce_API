@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  attr_accessor :credit_card_number, :credit_card_exp_month, :credit_card_exp_year, :credit_card_cvv
+  attr_accessor :card_token
   validates :status, presence: true
 
   belongs_to :user
@@ -14,10 +14,7 @@ class Order < ApplicationRecord
   def create_payment
     params = {
       order_id: id,
-      credit_card_number: credit_card_number,
-      credit_card_exp_month: credit_card_exp_month,
-      credit_card_exp_year: credit_card_exp_year,
-      credit_card_cvv: credit_card_cvv
+      card_token: card_token
     }
     Payment.create!(params)
   end
