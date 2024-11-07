@@ -16,7 +16,7 @@ class OrdersController < ApplicationController
         order.order_items.build(
           product: product,
           quantity: cart_item.quantity,
-          price: product.price
+          price: product.price,
         )
 
         product.update!(stock: product.stock - cart_item.quantity)

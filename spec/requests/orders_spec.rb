@@ -17,6 +17,7 @@ RSpec.describe "Orders", type: :request do
 
       it 'returns a HTTP status code: created' do
         post_order
+        binding.irb
         expect(response).to have_http_status(:created)
       end
 
