@@ -5,6 +5,6 @@ class OrderSerializer
   has_many :order_items
 
   attribute :total_price do |order|
-    order.order_items.sum { |item| item.quantity * item.price }
+    order.total_price
   end
 end

@@ -5,7 +5,7 @@ RSpec.describe "Orders", type: :request do
 
   context "POST" do
 
-    subject(:post_order) { post orders_url, headers: headers }
+    subject(:post_order) { post orders_url, headers: headers, params: { data: { card_token: 'tok_visa' } } }
     let!(:product_1) { create(:product, stock: 10) }
     let!(:product_2) { create(:product, stock: 20) }
 
@@ -24,6 +24,11 @@ RSpec.describe "Orders", type: :request do
         post_order
         expect(json_body['order']['data']).to eq(serialized_body('OrderSerializer', current_user.orders.first)['data'])
         expect(current_user.cart.cart_items).to eq([])
+      end
+
+      it 'creates a payment for the order' do
+        post_order
+        expect(current_user.orders.first.payment).not_to be_nil
       end
     end
 
@@ -64,15 +69,13 @@ RSpec.describe "Orders", type: :request do
 
   context "GET" do
     let!(:order) { create(:order, user: current_user) }
-
     subject(:get_order) { get orders_url, params:{ id: order.id } , headers: headers }
-
     describe 'valid context' do
       it 'returns a HTTP status code: ok' do
         get_order
         expect(response).to have_http_status(:ok)
       end
-
+      
       it 'returns the order data in json format' do
         get_order
         expect(json_body['data']).to eq(serialized_body('OrderSerializer',current_user.orders.first)['data'])
@@ -81,7 +84,6 @@ RSpec.describe "Orders", type: :request do
 
     describe 'invalid context' do
       subject(:get_order) { get orders_url, params:{ id: 9999 } , headers: headers }
-
       it 'returns a HTTP status code :not_found' do
         get_order
         expect(response).to have_http_status(:not_found)

@@ -7,9 +7,8 @@ class OrdersController < ApplicationController
 
     return render json: { error: 'Cart is empty' }, status: :unprocessable_entity if @cart.cart_items.empty?
 
-    order = current_user.orders.build
+    order = current_user.orders.build(order_params)
     ActiveRecord::Base.transaction do
-
       @cart.cart_items.each do |cart_item|
         product = cart_item.product
 
@@ -18,12 +17,14 @@ class OrdersController < ApplicationController
           quantity: cart_item.quantity,
           price: product.price
         )
-
         product.update!(stock: product.stock - cart_item.quantity)
       end
 
-      order.save!
-      @cart.cart_items.destroy_all
+      if order.save!
+        @cart.cart_items.destroy_all
+      else
+        puts "Order failed to save"
+      end
     end
 
     render json: {
@@ -31,7 +32,6 @@ class OrdersController < ApplicationController
       status: "pending",
       order: OrderSerializer.new(order).serializable_hash
     }, status: :created
-
   end
 
   def show
@@ -50,4 +50,7 @@ class OrdersController < ApplicationController
     @order = current_user.orders.find(params[:id])
   end
 
+  def order_params
+    params.require(:data).permit(:card_token)
+  end
 end

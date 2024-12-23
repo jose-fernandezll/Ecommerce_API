@@ -1,13 +1,14 @@
 class Payment < ApplicationRecord
-  attr_accessor :card_token
-
+  attr_accessor :card_token, :amount
+  
   belongs_to :order
-  before_validation :create_on_stripe
+  after_create :create_on_stripe
 
   def create_on_stripe
-    params = { amount: order.amount_cents, currency: 'usd', source: card_token}
+    order = self.order
+    params = { amount: order.total_price.to_i, currency: 'usd', source: card_token }
+
     response = Stripe::Charge.create(params)
     self.stripe_id = response.id
   end
-
 end

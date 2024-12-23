@@ -19,8 +19,11 @@ class User < ApplicationRecord
   private
 
   def create_on_stripe
-    params = { email: email.encode('UTF-8'), name: name.encode('UTF-8') }
-    response = Stripe::Customer.create(params)
+    response = Stripe::Customer.create({
+      name: name,
+      email: email
+    })
+
     self.stripe_id = response.id
   end
 

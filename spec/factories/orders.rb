@@ -7,8 +7,14 @@ FactoryBot.define do
       items_count { 3 }
     end
 
-    after(:create) do |order, evaluator|
+    before(:create) do |order, evaluator|
       create_list(:order_item, evaluator.items_count, order: order)
     end
+    
+    card_token { 'tok_visa' }
+
+
+    payment_method { 'credit_card' }
+
   end
 end
