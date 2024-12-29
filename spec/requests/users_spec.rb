@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Users", type: :request do
 
   context 'POST' do
-    subject(:post_user){ post user_registration_url, params: { user: user_params } }
+    subject(:post_user){ post user_registration_path, params: { user: user_params } }
 
     let(:valid_user) {{
       email: 'jose@gmail.com',

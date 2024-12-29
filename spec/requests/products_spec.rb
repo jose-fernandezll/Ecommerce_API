@@ -7,7 +7,7 @@ RSpec.describe "Products", type: :request do
     let!(:product_1) { create(:product) }
     let!(:product_2) { create(:product) }
 
-    subject(:get_index){ get products_url, headers: headers  }
+    subject(:get_index){ get api_v1_products_path, headers: headers  }
 
     describe '/products' do
       it 'returns a HTTP status code :ok' do
@@ -31,7 +31,7 @@ RSpec.describe "Products", type: :request do
     end
 
     describe '/products/:id' do
-      subject(:show_product) { get product_url(product), headers: headers  }
+      subject(:show_product) { get api_v1_product_path(product), headers: headers  }
 
       describe 'valid context' do
         let(:product){ product_1}
@@ -50,7 +50,7 @@ RSpec.describe "Products", type: :request do
 
       describe 'invalid context' do
         let(:invalid_product_id) { 9999 }
-        subject(:show_product) { get product_url(invalid_product_id), headers: headers  }
+        subject(:show_product) { get api_v1_product_path(invalid_product_id), headers: headers  }
 
         it 'returns an error when the product does not exist' do
           show_product
@@ -62,7 +62,7 @@ RSpec.describe "Products", type: :request do
   end
 
   context 'POST' do
-    subject(:post_product){ post products_url, params: { product: product }, headers: headers }
+    subject(:post_product){ post api_v1_products_path, params: { product: product }, headers: headers }
 
     let(:valid_product){
       {
@@ -143,7 +143,7 @@ RSpec.describe "Products", type: :request do
           include_context :login_user, admin: false
 
           it 'returns a forbidden status' do
-            post products_url, params: { product: valid_product }, headers: headers
+            post api_v1_products_path, params: { product: valid_product }, headers: headers
             expect(response).to have_http_status(:forbidden)
             expect(response.body).to include('You are not authorized to perform this action.')
           end
@@ -153,7 +153,7 @@ RSpec.describe "Products", type: :request do
   end
 
   context 'UPDATE' do
-    subject(:update_product){ put product_url(product), params: { product: product_params }, headers: headers }
+    subject(:update_product){ put api_v1_product_path(product), params: { product: product_params }, headers: headers }
     let!(:product){ create(:product) }
     let(:valid_product){
       {
@@ -233,7 +233,7 @@ RSpec.describe "Products", type: :request do
           include_context :login_user, admin: false
 
           it 'returns a forbidden status' do
-            put product_url(product), params: { product: valid_product }, headers: headers
+            put api_v1_product_path(product), params: { product: valid_product }, headers: headers
             expect(response).to have_http_status(:forbidden)
             expect(response.body).to include('You are not authorized to perform this action.')
           end
@@ -244,7 +244,7 @@ RSpec.describe "Products", type: :request do
   end
 
   context 'DESTROY' do
-    subject(:destroy_product){ delete product_url(product), headers: headers}
+    subject(:destroy_product){ delete api_v1_product_path(product), headers: headers}
 
     let!(:product_1){ create(:product) }
     let!(:product_2){ create(:product) }

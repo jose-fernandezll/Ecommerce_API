@@ -12,8 +12,6 @@ FactoryBot.define do
     end
     
     card_token { 'tok_visa' }
-
-
     payment_method { 'credit_card' }
 
   end

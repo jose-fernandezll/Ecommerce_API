@@ -5,17 +5,22 @@ Rails.application.routes.draw do
     registration: 'signup'
   },
   controllers: {
-    sessions: 'users/sessions',
-    registrations: 'users/registrations'
+    sessions: 'api/v1/users/sessions',
+    registrations: 'api/v1/users/registrations'
   }
-  resources :products
 
-  resource :cart, only: [:show] do
-    post 'add_item', to: 'carts#add_item'
-    delete 'remove_item', to: 'carts#remove_item'
+  namespace :api do
+    namespace :v1 do      
+      resources :products
+    
+      resource :cart, only: [:show] do
+        post 'add_item', to: 'carts#add_item'
+        delete 'remove_item', to: 'carts#remove_item'
+      end
+    
+      resource :orders, only: %i[show create]
+    end
   end
-
-  resource :orders, only: %i[show create]
 end
 
 

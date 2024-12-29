@@ -13,10 +13,13 @@ gem 'devise'
 gem 'devise-jwt'
 gem 'jsonapi-serializer'
 
+gem "rswag"
+
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem 'dotenv-rails'
   gem 'rspec-rails'
+  gem 'rswag-specs'
 end
 gem 'factory_bot_rails'
 

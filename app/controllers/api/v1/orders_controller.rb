@@ -1,4 +1,4 @@
-class OrdersController < ApplicationController
+class Api::V1::OrdersController < ApplicationController
   before_action :set_cart, only: [:create]
   before_action :find_order, only: [:show]
 

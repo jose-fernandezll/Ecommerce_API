@@ -5,14 +5,14 @@ RSpec.describe "Orders", type: :request do
 
   context "POST" do
 
-    subject(:post_order) { post orders_url, headers: headers, params: { data: { card_token: 'tok_visa' } } }
+    subject(:post_order) { post api_v1_orders_path, headers: headers, params: { data: { card_token: 'tok_visa' } } }
     let!(:product_1) { create(:product, stock: 10) }
     let!(:product_2) { create(:product, stock: 20) }
 
     describe 'valid context' do
       before do
-        post add_item_cart_url, params: { product_id: product_1.id, quantity: 2 }, headers: headers
-        post add_item_cart_url, params: { product_id: product_2.id, quantity: 3 }, headers: headers
+        post add_item_api_v1_cart_path, params: { product_id: product_1.id, quantity: 2 }, headers: headers
+        post add_item_api_v1_cart_path, params: { product_id: product_2.id, quantity: 3 }, headers: headers
       end
 
       it 'returns a HTTP status code: created' do
@@ -38,8 +38,8 @@ RSpec.describe "Orders", type: :request do
         let(:order) { build(:order, user: current_user) }
 
         before do
-          post add_item_cart_url, params: { product_id: product_1.id, quantity: 2 }, headers: headers
-          post add_item_cart_url, params: { product_id: product_2.id, quantity: 3 }, headers: headers
+          post add_item_api_v1_cart_path, params: { product_id: product_1.id, quantity: 2 }, headers: headers
+          post add_item_api_v1_cart_path, params: { product_id: product_2.id, quantity: 3 }, headers: headers
         end
 
         before do
@@ -69,7 +69,7 @@ RSpec.describe "Orders", type: :request do
 
   context "GET" do
     let!(:order) { create(:order, user: current_user) }
-    subject(:get_order) { get orders_url, params:{ id: order.id } , headers: headers }
+    subject(:get_order) { get api_v1_orders_path, params:{ id: order.id } , headers: headers }
     describe 'valid context' do
       it 'returns a HTTP status code: ok' do
         get_order
@@ -83,7 +83,7 @@ RSpec.describe "Orders", type: :request do
     end
 
     describe 'invalid context' do
-      subject(:get_order) { get orders_url, params:{ id: 9999 } , headers: headers }
+      subject(:get_order) { get api_v1_orders_path, params:{ id: 9999 } , headers: headers }
       it 'returns a HTTP status code :not_found' do
         get_order
         expect(response).to have_http_status(:not_found)
